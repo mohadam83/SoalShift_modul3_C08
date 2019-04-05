@@ -63,7 +63,9 @@ int main(int argc, char const *argv[]) {
     pthread_create(&(tid2),NULL,&cetak,NULL);
     while(1){
 	valread = read( new_socket , buffer, 1024);
-    	*stok = *stok + 1;  
+	if(strcmp(buffer, "tambah") == 0){
+	    *stok = *stok + 1;	   
+	}  
     }  
     pthread_join(tid2,NULL);
     return 0;

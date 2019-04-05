@@ -3,7 +3,75 @@
 ## Soal 1
 
 ## Soal 2
-Untuk menyelesai
+Untuk menyelesaikan soal nomer 2 ini, maka kami membuat 4 program, yaitu untuk Client Pembeli, Client Penjual, Server Pembeli dan Server Penjual. Agar antara client pembeli dan server pembeli maupun antara client penjual dan server penjual dapat terhubung, maka digunakan socket. Antara client pembeli dan server pembeli kami menggunakan port 7000, sementara antara client penjual dan server penjual menggunakan port 8080. Sehingga client penjual pasti akan terkonek ke server penjual begitupun pada client pembeli dan server pembeli. Selain itu, digunakan juga *Shared Memory* agar nilai stok yang berada di server pembeli dan penjual selalu sama, meskipun hanya dilakukan perubahan di salah satu server saja yaitu penjual saja atau hanya di pembeli. Syntax shared memorynya seperti di bawah ini.
+```
+key_t kode = 1234;    
+int shmid = shmget(kode, sizeof(int), IPC_CREAT | 0666);
+stok = shmat(shmid, NULL, 0);
+```
+*kode* yang bertipe *key_t* tersebut adalah semacam kode penghubung antara server pembeli dan server penjual yaitu di variabel pointer *stok*. 
+
+Pada program Client Pembeli sendiri hanya digunakan sebagai input untuk mengurangi stok ketika ada perintah *beli*, sehingga perintah ini akan dikirim ke server pembeli untuk melakukan pengecekan apakah stok masih ada atau tidak dengan menggunakan syntax ```send(sock , perintah , strlen(perintah) , 0 );``` dan selain itu pada client pembeli akan menampilkan status apakah transaksi yang dilakukan berhasil yaitu ketika kita ingin *beli* dan stok masih lebih dari 0 atau transaksi yang dilakukan gagal yaitu ketika kita ingin *beli* namun stok telah bernilai 0. Untuk mengetahui status tersebut maka nantinya akan ada pesan yang dikirim dari server pembeli melalui socket dengan menggunakan syntax seperti berikut ```valread = read( sock , buffer, 1024);``` dan diterima di client pembeli ke dalam array of char *buffer*, indeks dari *buffer* ke 0 bernilai 1 jika transaksi berhasil dan bernilai 0 jika gagal. Syntaxnya seperti di bawah ini, sementara untuk syntax proses pembuatan socket mirip seperti di modul 3. 
+```
+while(1){
+    printf("perintah pembeli : ");	scanf("%s", perintah);
+    send(sock , perintah , strlen(perintah) , 0 );
+    valread = read( sock , buffer, 1024);
+    if(buffer[0] == '1'){
+    	printf("transaksi berhasil\n");
+    }
+    else if(buffer[0] == '0'){
+    	printf("transaksi gagal\n");
+   }
+}
+```
+
+Pada program server pembeli akan dilakukan proses pengurangan stok jika menerima perintah *beli* dari client pembeli dengan menggunakan socket ```valread = read( new_socket , buffer, 1024);```. Kemudian, di program ini terdapat thread untuk melakukan pengurangan stok tersebut. Prosesnya adalah melakukan pengecekan terlebih dahulu apakah perintahnya berupa *beli* atau tidak dengan menggunakan strcmp ```strcmp(buffer, "beli") == 0```, setelah itu jika nilai stok masih lebih dari 0, maka akan dilakukan pengurangan stok dan mengubah status menjadi 1 yang berarti transaksi berhasil dilakukan dan status tersebut yang nantinya akan dikirim ke client pembeli. Tetapi, jika stok telah bernilai 0 sebelum dilakukan pengurangan, maka tidak akan ada proses pengurangan stok, yang terjadi hanyalah membuat status menjadi 0 yang berarti transaksi gagal dilakukan. Syntaxnya seperti di bawah ini.
+```
+pthread_create(&(tid1),NULL,&ser_pem,NULL);
+pthread_join(tid1,NULL);
+
+void* ser_pem(void *arg){
+    if(strcmp(buffer, "beli") == 0){
+	if(*stok > 0){
+	    *stok = *stok - 1;
+	    status[0] = '1';
+	} 
+	else {
+	    status[0] = '0';
+	} 
+    } 
+}
+```
+Pada syntax di atas digunakan juga *pthread_join* untuk menunggu agar proses pada thread untuk melakukan pengurangan stok benar-benar telah selesai dilakukan.
+
+Lalu, status yang dihasilkan dari proses pengurangan stok akan dikirim ke client pembeli dengan menggunakan syntax berikut ```send(new_socket , status , strlen(status) , 0 );```.
+
+Pada program Client Penjual sendiri hanya digunakan sebagai input untuk menambah stok ketika ada perintah *tambah*, sehingga perintah ini akan dikirim ke server penjual untuk melakukan penambahan stok dengan menggunakan syntax ```send(sock , perintah , strlen(perintah) , 0 );``` Syntaxnya seperti di bawah ini, sementara untuk syntax proses pembuatan socket mirip seperti di modul 3. 
+```
+while(1){
+    printf("perintah penjual : ");	scanf("%s", perintah);
+    send(sock , perintah , strlen(perintah) , 0 );
+}
+```
+
+Pada program server penjual akan dilakukan proses penambahan stok jika menerima perintah *tambah* dari client penjual dengan menggunakan socket ```valread = read(new_socket , buffer, 1024);```. Kemudian, prosesnya adalah melakukan pengecekan terlebih dahulu apakah perintahnya berupa *tambah* atau tidak dengan menggunakan strcmp ```strcmp(buffer, "tambah") == 0```. Syntaxnya seperti di bawah ini.
+```
+valread = read( new_socket , buffer, 1024);
+if(strcmp(buffer, "tambah") == 0){
+    *stok = *stok + 1;	   
+}  
+```
+
+Selain itu, pada server penjual ini terdapat thread yang selalu berjalan yang bertujuan untuk mencetak jumlah *stok* yang ada sekarang baik setelah dilakukan *beli* maupun *tambah* setiap 5 second. Syntaxnya seperti di bawah ini.
+```
+void* cetak(void *arg){
+    while(1){	
+	printf("Stock sekarang : %d\n", *stok);
+	sleep(5);
+    }
+}
+```
 
 ## Soal 3
 ```
