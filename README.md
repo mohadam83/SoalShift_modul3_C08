@@ -3,8 +3,81 @@
 ## Soal 1
 
 ## Soal 2
+Untuk menyelesai
 
 ## Soal 3
+```
+int main(){
+    pthread_t tid[3];
+    pthread_create(&(tid[1]),NULL,Agmal_Bangun,NULL);
+    pthread_create(&(tid[2]),NULL,Iraj_Tidur,NULL);
+    while(1){
+        scanf("%d", &perintah);
+        if(perintah == 0){
+            pthread_create(&(tid[0]),NULL,Cetak_Status,NULL);
+        }		
+    }
+    return 0;
+}
+```
+Untuk menyelesaikan soal nomer 3 ini, maka perlu dibuat tiga thread yaitu untuk *Agmal_Bangun*, *Iraj_Tidur*, dan *Cetak_Status*. 
+
+Untuk *Agmal_Bangun* berfungsi untuk melakukan proses penambahan *WakeUp_Status* sebanyak 15 jika ada input berupa _Agmal Ayo Bangun_ dan disini saya ganti dengan input berupa bilangan 1. Namun, penambahan *WakeUp_Status* tidak akan terjadi jika thread ini dalam posisi disable selama 10s yaitu ketika perintah _Iraj Ayo Tidur_ telah dipanggil sebanyak 3x. Selain itu, program ini akan berhenti jika *WakeUp_Status* telah lebih dari atau sama dengan 100. Syntax untuk thread *Agmal_Bangun* seperti di bawah ini.
+```
+void *Agmal_Bangun(void *argv){
+    while(1){
+	if(Iraj == 3){
+	    printf("Agmal Ayo Bangun disabled 10 s\n");
+	    sleep(10);
+	    Iraj = 0;	   
+	}
+	if(perintah == 1){
+	    WakeUp_Status += 15;
+	    Agmal++;	     
+	    perintah = -1;
+    	}	
+	if(WakeUp_Status >= 100){
+	    printf("Agmal Terbangun,mereka bangun pagi dan berolahraga\n");
+	    exit(0);
+	}
+    }   
+}
+```
+
+Untuk *Iraj_Tidur* berfungsi untuk melakukan proses pengurangan *Spirit_Status* sebanyak 20 jika ada input berupa _Iraj Ayo Tidur_ dan disini saya ganti dengan input berupa bilangan 2. Namun, pengurangan *Spirit_Status* tidak akan terjadi jika thread ini dalam posisi disable selama 10s yaitu ketika perintah _Agmal Ayo Bangun_ telah dipanggil sebanyak 3x. Selain itu, program ini akan berhenti jika *Spirit_Status* telah kurang dari atau sama dengan 0. Syntax untuk thread *Iraj_Tidur*  seperti di bawah ini.
+```
+void *Iraj_Tidur(void *argv){
+    while(1){
+	if(Agmal == 3){
+	    printf("Fitur Iraj Ayo Tidur disabled 10 s\n");
+	    sleep(10);
+	    Agmal = 0;
+	}
+	if(perintah == 2){
+	    Spirit_Status -= 20;
+	    Iraj++;	    
+	    perintah = -1;
+	}
+	if(Spirit_Status <= 0){
+	    printf("Iraj ikut tidur, dan bangun kesiangan bersama Agmal\n");
+	    exit(0);
+	}
+    }   
+}
+```
+
+Untuk *Cetak_Status* berfungsi untuk menampilkan kondisi terkini mengenai nilai dari *WakeUp_Status* dan *Spirit_Status* dan thread ini akan berjalan ketika terdapat perintah *All Status* dan disini kami ganti dengan bilangan 0. Syntaxnya seperti di bawah ini.
+```
+void *Cetak_Status(void *argv){
+    printf("Agmal WakeUp_Status = %d\nIraj Spirit_Status = %d\n", WakeUp_Status, Spirit_Status);
+    perintah = -1;
+}
+```
+
+Untuk semua perintah akan diganti dengan -1 setelah menjalankan proses yang diminta oleh perintah tersebut sehingga setiap thread akan melakukan prosesnya baik untuk melakukan penambahan, pengurangan maupun menampilkan status-status yang ada hanya dilakukan sekali. 
+
+Variabel *Agmal* dan *Iraj* ini digunakan sebagai counter perintah masing-masing mengenai *Agmal Ayo Bangun* dan *Iraj Ayo Tidur* dan setelah mencapai 3 kali, misalnya *Agmal Ayo Bangun* telah 3x dipanggil maka thread *Iraj_Tidur* akan terdisable selama 10second dan setelah disablenya berakhir maka counter *Agmal* yang sudah bernilai tiga akan kembali bernilai 0, begitupun pada counter *Iraj*.
+
 
 ## Soal 4
 Langkah - langkah untuk menyelesaikan soal nomer 4 ini, maka yang pertama dilakukan adalah membuat directory *Document* dengan syntax ```mkdir``` dengan lokasi sesuai ketentuan di soal yaitu ```/home/adam/Document``` seperti di bawah ini.
