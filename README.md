@@ -244,6 +244,6 @@ pthread_join(tid_unzip2,NULL);
 ```
 
 ## Soal 5
-
+Permasalahan : memasukkan input an bermasalah
 
 
