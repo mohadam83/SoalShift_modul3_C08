@@ -1,6 +1,37 @@
 # SoalShift_modul3_C08
 
 ## Soal 1
+Buat fungi untuk menghitung faktorial.
+```
+void* hit(void* arg){
+    ll value=1;
+    ll a = (ll) arg;
+    for(ll i=2;i<=a;i++) value*=i;
+    printf("Result of %lld! = %lld\n",a,value);
+    return NULL;
+}
+```
+
+Setelah itu buatlah fungi untuk mensorting angka, baik dari terkecil maupun terbesar, disini kami menggunakan Selection Sort secara ascending. 
+```
+void selectionSort() 
+{ 
+    int i, j, min_idx; 
+  
+    for (i = 0; i < b-1; i++) 
+    { 
+
+        min_idx = i; 
+        for (j = i+1; j < b; j++) 
+          if (arr[j] < arr[min_idx]) 
+            min_idx = j; 
+  
+        swap(&arr[min_idx], &arr[i]); 
+    } 
+} 
+```
+
+Lalu buatlah thread untuk menjalankan fungsi faktorial.
 
 ## Soal 2
 Untuk menyelesaikan soal nomer 2 ini, maka kami membuat 4 program, yaitu untuk Client Pembeli, Client Penjual, Server Pembeli dan Server Penjual. Agar antara client pembeli dan server pembeli maupun antara client penjual dan server penjual dapat terhubung, maka digunakan socket. Antara client pembeli dan server pembeli kami menggunakan port 7000, sementara antara client penjual dan server penjual menggunakan port 8080. Sehingga client penjual pasti akan terkonek ke server penjual begitupun pada client pembeli dan server pembeli. Selain itu, digunakan juga *Shared Memory* agar nilai stok yang berada di server pembeli dan penjual selalu sama, meskipun hanya dilakukan perubahan di salah satu server saja yaitu penjual saja atau hanya di pembeli. Syntax shared memorynya seperti di bawah ini.
